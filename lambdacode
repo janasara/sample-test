@@ -1,0 +1,88 @@
+function getQuote(callback, productName) {
+  //console.log("Response quote for productName:\n"+JSON.stringify(productName,null,2));
+  if (!productName)
+    productName = "shoe";
+  
+    
+    
+  var url = "http://infynmsara.eastus.cloudapp.azure.com/offers?productcategory="+productName;
+  
+/*  let offerMessage = "";
+  switch (productName) {
+    case "shoe": 
+       offerMessage = "Flat 10% discount on Running Shoes, timepass neo shoes and Outdoor Shoes for the shoes purchased above 2000";
+       break;
+    case "bag": 
+       offerMessage = "Buy timepass Bags, Bagpacks, Duffle Bags in www.timepass.co.in with coupon code LUCKYCHARM to get 100% cashback for first 50 lucky winners. Offer closes by before 30 Nov";
+       break;
+  }
+
+  callback(offerMessage); */
+  
+  // Below code required to get dynamic restful data
+
+  /*
+  
+  var req = http.get(url, function(res) {
+    var body = "";
+
+    res.on('data', function(chunk) {
+      body += chunk;
+    });
+
+    res.on('end', function() {
+      body = body.replace(/\\/g,'');
+      var quote = JSON.parse(body);
+      callback(quote[0].description);
+    });
+
+  });
+
+  req.on('error', function(err) {
+    callback('',err);
+  });
+  */
+  
+const pcategory='Short term care';
+var data = JSON.stringify({
+  category: pcategory
+})
+
+var options = {
+  hostname: 'infynmsara.eastus.cloudapp.azure.com',
+  port: 80,
+  path: '/api/policies',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Content-Length': data.length
+  }
+}
+
+var req = http.request(options, (res) => {
+ 
+  console.log("statusCode:\n"+ JSON.stringify(res.statusCode,null,2));
+  var body = "";
+    res.on('data', function(chunk) {
+      body += chunk;
+    });
+  
+    res.on('end', function() {
+      body = body.replace(/\\/g,'');
+      var quote = JSON.parse(body);
+      console.log("quote:\n"+ JSON.stringify(quote,null,2));
+      callback("your " +pcategory+ " policy premium  " + quote.policyPremium + " $ and premium due date "+ quote.policypremiumDueDate 
+      
+      );
+    });
+  
+})
+
+req.on('error', (error) => {
+  console.error(error)
+})
+
+req.write(data)
+req.end()
+  
+}
